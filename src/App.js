@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Board from "./components/Board";
+import GithubCorner from "react-github-corner";
 import "./App.scss";
 import cloneDeep from "lodash.clonedeep";
 import useEvent from "./Hooks/useEvent";
@@ -8,7 +9,7 @@ import getNewPosition from "./utils/getNewPosition";
 import isExist from "./utils/isExist";
 import ActionPanel from "./components/ActionPanel";
 import Popup from "./components/Popup";
-
+import { useSwipeable } from "react-swipeable";
 function App() {
   const UP = 38;
   const DOWN = 40;
@@ -344,22 +345,6 @@ function App() {
     setData(lastMove);
   };
 
-  // Replay
-  // const onClickReplay = () => {
-  //   setReplayStatus(true);
-  //   const history = cloneDeep(moveHistory);
-  //   history.push(data);
-  //   for (let i = 0; i < history.length; i++) {
-  //     setTimeout(() => {
-  //       console.log('replay in progress', i);
-  //       setData(history[i]);
-  //       if (i === history.length - 1) {
-  //         setReplayStatus(false);
-  //       }
-  //     }, i * 1000);
-  //   }
-  // };
-
   // Redo
   const onClickRedo = () => {
     const history = cloneDeep(moveHistory);
@@ -412,22 +397,34 @@ function App() {
   }, [score, setBest, scoreHistory]);
 
   useEvent("keydown", handleKeyDown);
-
+  const handlers = useSwipeable({
+    onSwipedLeft: swipeLeft,
+    onSwipedRight: swipeRight,
+    onSwipedUp: swipeUp,
+    onSwipedDown: swipeDown,
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
   return (
     <div>
+      <GithubCorner href="https://github.com/SankethGB/2048" />
       <div className="container">
-        <Board
-          data={data}
-          score={score}
-          best={best}
-          onClickNewGame={onClickNewGame}
-        />
+        <div {...handlers}>
+          <Board
+            data={data}
+            score={score}
+            best={best}
+            onClickNewGame={onClickNewGame}
+          />
+        </div>
+
         <div className="container__action">
           <ActionPanel
             onClickUndo={onClickUndo}
             disableUndo={!moveHistory.length || isWon}
             onClickRedo={onClickRedo}
             disableRedo={!undoMoves.length}
+            maxScore={best}
           />
         </div>
         {popupStatus.visible && (

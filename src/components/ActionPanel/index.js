@@ -1,7 +1,8 @@
 import React from "react";
 import { IoIosUndo, IoIosRedo } from "react-icons/io";
-import "./ActionPanel.scss";
 
+import "./ActionPanel.scss";
+import ShareComponent from "../ShareComponent/index";
 const nop = () => {};
 
 export default function ActionPanel({
@@ -10,6 +11,7 @@ export default function ActionPanel({
 
   onClickRedo,
   disableRedo,
+  maxScore,
 }) {
   return (
     <div className="action-panel">
@@ -45,6 +47,9 @@ export default function ActionPanel({
           onClick={!disableRedo ? onClickRedo : nop}
         />
         Redo
+      </div>
+      <div>
+        <ShareComponent maxscore={maxScore} />
       </div>
     </div>
   );
